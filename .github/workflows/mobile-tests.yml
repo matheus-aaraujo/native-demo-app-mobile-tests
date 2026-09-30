@@ -1,0 +1,103 @@
+name: Mobile Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  mobile-tests:
+    name: Run ${{ matrix.platform }} tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            command: npm run test:android
+          - platform: ios
+            command: npm run test:ios
+
+    env:
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      BROWSERSTACK_ANDROID_APP: ${{ secrets.BROWSERSTACK_ANDROID_APP }}
+      BROWSERSTACK_IOS_APP: ${{ secrets.BROWSERSTACK_IOS_APP }}
+      BROWSERSTACK_PROJECT_NAME: native-demo-app-mobile-tests
+      BROWSERSTACK_BUILD_NAME: github-${{ github.run_number }}-${{ matrix.platform }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: ${{ matrix.command }}
+
+      - name: Generate Allure report
+        if: always()
+        run: npm run report:generate
+
+      - name: Upload Allure report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ matrix.platform }}
+          path: allure-report/
+          if-no-files-found: error
+
+  deploy-allure-report:
+    name: Publish Allure report
+    if: always() && github.event_name != 'pull_request'
+    needs: mobile-tests
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download Android Allure report artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: allure-report-android
+          path: allure-report/android
+
+      - name: Download iOS Allure report artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: allure-report-ios
+          path: allure-report/ios
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: allure-report
+
+      - name: Deploy Allure report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

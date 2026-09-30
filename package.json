@@ -1,0 +1,40 @@
+{
+  "name": "native-demo-app-mobile-tests",
+  "version": "1.0.0",
+  "description": "Mobile test automation project for native-demo-app using Appium, WebdriverIO, JavaScript, and Mocha, with Page Object Model structure and BrowserStack support for Android and iOS real-device testing.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "lint": "eslint .",
+    "validate:config": "node -e \"require('./config/wdio.android.local.conf'); require('./config/wdio.android.conf'); require('./config/wdio.ios.conf'); console.log('WDIO configs loaded')\"",
+    "test": "npm run test:android:local",
+    "test:android:local": "wdio run ./config/wdio.android.local.conf.js",
+    "test:android": "wdio run ./config/wdio.android.conf.js",
+    "test:ios": "wdio run ./config/wdio.ios.conf.js",
+    "test:mobile": "npm run test:android && npm run test:ios",
+    "report:generate": "allure generate allure-results --clean -o allure-report",
+    "report:open": "allure open allure-report"
+  },
+  "keywords": [
+    "appium",
+    "webdriverio",
+    "mocha",
+    "browserstack",
+    "mobile-testing",
+    "page-object-model"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@wdio/allure-reporter": "^9.20.0",
+    "@wdio/browserstack-service": "^9.20.0",
+    "@wdio/cli": "^9.20.0",
+    "@wdio/local-runner": "^9.20.0",
+    "@wdio/mocha-framework": "^9.20.0",
+    "@wdio/spec-reporter": "^9.20.0",
+    "allure-commandline": "^2.34.1",
+    "chai": "^6.2.2",
+    "dotenv": "^17.2.2",
+    "eslint": "^9.36.0"
+  }
+}
