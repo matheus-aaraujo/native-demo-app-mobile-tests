@@ -7,9 +7,13 @@
   "scripts": {
     "lint": "eslint .",
     "validate:config": "node -e \"require('./config/wdio.android.local.conf'); require('./config/wdio.android.conf'); require('./config/wdio.ios.conf'); console.log('WDIO configs loaded')\"",
+    "report:clean": "node -e \"const fs = require('node:fs'); ['allure-results', 'allure-report'].forEach((dir) => fs.rmSync(dir, { recursive: true, force: true }));\"",
+    "pretest:android:local": "npm run report:clean",
     "test": "npm run test:android:local",
     "test:android:local": "wdio run ./config/wdio.android.local.conf.js",
+    "pretest:android": "npm run report:clean",
     "test:android": "wdio run ./config/wdio.android.conf.js",
+    "pretest:ios": "npm run report:clean",
     "test:ios": "wdio run ./config/wdio.ios.conf.js",
     "test:mobile": "npm run test:android && npm run test:ios",
     "report:generate": "allure generate allure-results --clean -o allure-report",
