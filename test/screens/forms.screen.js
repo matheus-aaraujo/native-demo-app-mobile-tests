@@ -25,6 +25,10 @@ class FormsScreen extends BaseScreen {
     return $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("Select an item..."))');
   }
 
+  get dropdownField() {
+    return $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().className("android.widget.EditText").textContains("awesome"))');
+  }
+
   get activeButton() {
     return $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("Active"))');
   }
@@ -62,7 +66,14 @@ class FormsScreen extends BaseScreen {
   }
 
   async selectDropdownOption(optionText) {
-    await this.tap(this.dropdownPlaceholder);
+    const hasPlaceholder = await this.dropdownPlaceholder.isDisplayed().catch(() => false);
+
+    if (hasPlaceholder) {
+      await this.tap(this.dropdownPlaceholder);
+    } else {
+      await this.tap(this.dropdownField);
+    }
+
     await this.tap(this.dropdownOption(optionText));
   }
 
@@ -88,4 +99,3 @@ class FormsScreen extends BaseScreen {
 }
 
 module.exports = new FormsScreen();
-
