@@ -10,7 +10,7 @@ on:
       run_android_browserstack:
         description: 'Run Android tests on BrowserStack'
         required: false
-        default: 'false'
+        default: 'true'
         type: choice
         options:
           - 'false'
@@ -60,7 +60,7 @@ jobs:
 
   android-browserstack-tests:
     name: Run Android tests on BrowserStack
-    if: github.event_name == 'workflow_dispatch' && inputs.run_android_browserstack == 'true'
+    if: github.event_name != 'workflow_dispatch' || inputs.run_android_browserstack == 'true'
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -153,3 +153,4 @@ jobs:
           name: allure-report-ios
           path: allure-report/
           if-no-files-found: error
+
