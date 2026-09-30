@@ -46,3 +46,4 @@ class LoginScreen extends BaseScreen {
 }
 
 module.exports = new LoginScreen();
+
