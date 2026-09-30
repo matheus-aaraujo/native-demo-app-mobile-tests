@@ -53,8 +53,9 @@ com.wdiodemoapp/com.wdiodemoapp.MainActivity
 ### BrowserStack requirements
 
 - BrowserStack username and access key.
-- Android app uploaded to BrowserStack, producing a `bs://<app-id>` value.
-- iOS app uploaded to BrowserStack, producing a `bs://<app-id>` value.
+- For Android in GitHub Actions, the BrowserStack workflow downloads the APK from the official GitHub release and uploads it to BrowserStack automatically.
+- For local Android BrowserStack execution, provide `BROWSERSTACK_ANDROID_APP` in the `bs://<app-id>` format.
+- For iOS BrowserStack execution, provide `BROWSERSTACK_IOS_APP` in the `bs://<app-id>` format.
 
 ## iOS support notes
 
@@ -96,12 +97,17 @@ Create a `.env` file from the example:
 cp .env.example .env
 ```
 
-Fill the required values:
+Fill the values needed for your execution target:
 
 ```bash
 BROWSERSTACK_USERNAME=
 BROWSERSTACK_ACCESS_KEY=
+
+# Required only for local Android BrowserStack execution.
+# The GitHub Actions BrowserStack workflow uploads the Android app automatically.
 BROWSERSTACK_ANDROID_APP=bs://<android-app-id>
+
+# Required only for iOS BrowserStack execution.
 BROWSERSTACK_IOS_APP=bs://<ios-app-id>
 ```
 
@@ -239,26 +245,21 @@ Unique emails are generated at runtime to keep sign up and login scenarios repea
 
 ## GitHub Actions
 
-The workflow in `.github/workflows/mobile-tests.yml` runs Android and iOS tests on BrowserStack and publishes the Allure report as a GitHub Pages artifact for non-pull-request runs.
+The default workflow in `.github/workflows/mobile-tests.yml` runs without BrowserStack so the project can be validated without paid third-party usage. It performs project validation, starts an Android emulator, downloads the latest Android APK from the official `native-demo-app` GitHub releases, installs it on the emulator, and runs the Android suite locally.
 
-Configure these repository secrets before running the pipeline:
+BrowserStack execution is isolated in `.github/workflows/browserstack-mobile-tests.yml`. This workflow is manual through `workflow_dispatch`, and both Android and iOS are disabled by default.
 
-- `BROWSERSTACK_USERNAME`
-- `BROWSERSTACK_ACCESS_KEY`
-- `BROWSERSTACK_ANDROID_APP`
-- `BROWSERSTACK_IOS_APP`
-
-
-
-## GitHub Actions
-
-The default workflow in `.github/workflows/mobile-tests.yml` runs without BrowserStack so the project can be validated without paid third-party usage. It performs the project validation, starts an Android emulator, downloads the latest Android APK from the official `native-demo-app` GitHub releases, installs it on the emulator, and runs the Android suite locally.
-
-BrowserStack execution is isolated in `.github/workflows/browserstack-mobile-tests.yml`. This workflow is manual through `workflow_dispatch` and both Android and iOS are disabled by default. Enable Android or iOS only when BrowserStack credentials and uploaded app IDs are available.
-
-Configure these repository secrets before running the BrowserStack workflow:
+For Android BrowserStack execution in GitHub Actions, configure these repository secrets:
 
 - `BROWSERSTACK_USERNAME`
 - `BROWSERSTACK_ACCESS_KEY`
-- `BROWSERSTACK_ANDROID_APP`
+
+The Android BrowserStack workflow downloads the APK from the official GitHub release, uploads it to BrowserStack App Automate, reads the returned `bs://<app-id>`, and uses it during the same workflow run.
+
+For iOS BrowserStack execution, also configure:
+
 - `BROWSERSTACK_IOS_APP`
+
+The iOS app value must be a compatible BrowserStack app ID in the `bs://<app-id>` format.
+
+
