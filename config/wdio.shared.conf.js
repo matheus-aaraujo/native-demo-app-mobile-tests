@@ -60,6 +60,14 @@ const config = {
     ]
   ],
 
+  async beforeTest() {
+    if (process.env.TEST_PLATFORM === 'Android') {
+      const appPackage = process.env.ANDROID_APP_PACKAGE || 'com.wdiodemoapp';
+
+      await browser.terminateApp(appPackage);
+      await browser.activateApp(appPackage);
+    }
+  },
   async afterTest(_test, _context, { error }) {
     if (error) {
       const screenshot = await browser.takeScreenshot();
@@ -80,3 +88,4 @@ const config = {
 };
 
 exports.config = config;
+
