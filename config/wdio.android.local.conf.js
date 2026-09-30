@@ -67,6 +67,10 @@ exports.config = {
       'appium:appActivity': process.env.ANDROID_APP_ACTIVITY || 'com.wdiodemoapp.MainActivity',
       'appium:noReset': true,
       'appium:forceAppLaunch': true,
+      'appium:appWaitActivity': process.env.ANDROID_APP_ACTIVITY || 'com.wdiodemoapp.MainActivity',
+      'appium:appWaitDuration': 20000,
+      'appium:disableWindowAnimation': true,
+      'appium:autoGrantPermissions': true,
       'appium:newCommandTimeout': 120
     }
   ]
