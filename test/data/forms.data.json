@@ -1,0 +1,13 @@
+﻿{
+  "inputText": "WebdriverIO forms",
+  "dropdownOptions": [
+    "webdriver.io is awesome",
+    "Appium is awesome",
+    "This app is awesome"
+  ],
+  "messages": {
+    "switchOn": "Click to turn the switch ON",
+    "switchOff": "Click to turn the switch OFF",
+    "activeButtonAlert": "This button is active"
+  }
+}
