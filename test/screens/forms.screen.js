@@ -1,4 +1,4 @@
-﻿const BaseScreen = require('./base.screen');
+const BaseScreen = require('./base.screen');
 
 class FormsScreen extends BaseScreen {
   get title() {
@@ -26,11 +26,11 @@ class FormsScreen extends BaseScreen {
   }
 
   get activeButton() {
-    return $('~button-Active');
+    return $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("Active"))');
   }
 
   get inactiveButton() {
-    return $('android=new UiSelector().text("Inactive")');
+    return $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("Inactive"))');
   }
 
   get activeButtonAlertMessage() {
@@ -88,3 +88,4 @@ class FormsScreen extends BaseScreen {
 }
 
 module.exports = new FormsScreen();
+
