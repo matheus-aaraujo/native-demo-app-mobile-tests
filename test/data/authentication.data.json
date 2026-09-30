@@ -1,0 +1,23 @@
+{
+  "validUsers": [
+    {
+      "scenario": "default valid user",
+      "emailPrefix": "mobile.user",
+      "emailDomain": "test.com",
+      "password": "Password@123"
+    },
+    {
+      "scenario": "valid user with numeric password",
+      "emailPrefix": "mobile.qa",
+      "emailDomain": "test.com",
+      "password": "12345678"
+    }
+  ],
+  "messages": {
+    "loginSuccess": "You are logged in!",
+    "signUpSuccess": "You successfully signed up!",
+    "invalidEmailError": "Please enter a valid email address",
+    "invalidPasswordError": "Please enter at least 8 characters",
+    "differentPasswordError": "Please enter the same password"
+  }
+}
