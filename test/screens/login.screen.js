@@ -2,7 +2,7 @@ const BaseScreen = require('./base.screen');
 
 class LoginScreen extends BaseScreen {
   get loginMenu() {
-    return android=new UiSelector().text(\"Login\");
+    return $('android=new UiSelector().text("Login")');
   }
 
   get loginTab() {
@@ -46,5 +46,3 @@ class LoginScreen extends BaseScreen {
 }
 
 module.exports = new LoginScreen();
-
-
