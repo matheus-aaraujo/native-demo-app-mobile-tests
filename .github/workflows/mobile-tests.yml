@@ -81,15 +81,15 @@ jobs:
       - name: Run Android tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 35
-          target: google_apis
+          api-level: 30
+          target: default
           arch: x86_64
-          profile: pixel_6
+          profile: pixel_2
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
             appium --log-level info > appium.log 2>&1 &
-            adb wait-for-device
+            adb devices
             adb install -r apps/native-demo-app.apk
             npm run test:android:local
 
@@ -112,4 +112,5 @@ jobs:
           name: allure-report-android-local
           path: allure-report/
           if-no-files-found: ignore
+
 
