@@ -1,0 +1,123 @@
+name: BrowserStack Mobile Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_android_browserstack:
+        description: 'Run Android tests on BrowserStack'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      run_ios_browserstack:
+        description: 'Run iOS tests on BrowserStack'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browserstack-mobile-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-browserstack-tests:
+    name: Run Android tests on BrowserStack
+    if: inputs.run_android_browserstack == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      BROWSERSTACK_ANDROID_APP: ${{ secrets.BROWSERSTACK_ANDROID_APP }}
+      BROWSERSTACK_PROJECT_NAME: native-demo-app-mobile-tests
+      BROWSERSTACK_BUILD_NAME: github-${{ github.run_number }}-android
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate BrowserStack Android variables
+        run: |
+          test -n "$BROWSERSTACK_USERNAME"
+          test -n "$BROWSERSTACK_ACCESS_KEY"
+          test -n "$BROWSERSTACK_ANDROID_APP"
+
+      - name: Run Android tests
+        run: npm run test:android
+
+      - name: Generate Allure report
+        if: always()
+        run: npm run report:generate
+
+      - name: Upload Android Allure report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-browserstack-android
+          path: allure-report/
+          if-no-files-found: ignore
+
+  ios-browserstack-tests:
+    name: Run iOS tests on BrowserStack
+    if: inputs.run_ios_browserstack == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      BROWSERSTACK_IOS_APP: ${{ secrets.BROWSERSTACK_IOS_APP }}
+      BROWSERSTACK_PROJECT_NAME: native-demo-app-mobile-tests
+      BROWSERSTACK_BUILD_NAME: github-${{ github.run_number }}-ios
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate BrowserStack iOS variables
+        run: |
+          test -n "$BROWSERSTACK_USERNAME"
+          test -n "$BROWSERSTACK_ACCESS_KEY"
+          test -n "$BROWSERSTACK_IOS_APP"
+
+      - name: Run iOS tests
+        run: npm run test:ios
+
+      - name: Generate Allure report
+        if: always()
+        run: npm run report:generate
+
+      - name: Upload iOS Allure report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-browserstack-ios
+          path: allure-report/
+          if-no-files-found: ignore
